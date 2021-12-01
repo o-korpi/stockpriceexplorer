@@ -14,11 +14,7 @@ fun main() {
 
             route {
                 path("/") {
-                    url.value = "/stock"
-                }
-
-                path("/stock") {
-
+                    url.value = "/stock/AAPL"
                 }
 
                 path("/stock/{ticker}") { params ->
