@@ -24,6 +24,7 @@ fun getStockPrice(ticker: String): BigDecimal {
 
 private fun formatStockPriceData(price: BigDecimal): String {
     // Turn invalid prices to error messages
+    // is it necessary to have 3 functions? prob not, but I did it anyways
     if (price != BigDecimal(-1)) return "$price"
     return "Invalid ticker"
 }

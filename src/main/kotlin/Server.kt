@@ -25,10 +25,12 @@ fun main() {
                     val ticker: KVar<String> = params.getValue("ticker")
                     val price: KVal<String> = ticker.map { getFormattedStockPrice(it) }
 
-                    val mainDiv = div(fomantic.ui.centered.raised.card)
+                    // spacing, idk how padding or margins works with fomantic
+                    for (i in 1..9) br()
 
-                    mainDiv.new {
+                    div(fomantic.ui.centered.raised.card).new {
 
+                        br()
                         h2(fomantic.ui.text.center).text("Search for a stock")
 
                         div(fomantic.ui.icon.input).new {
