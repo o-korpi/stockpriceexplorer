@@ -1,4 +1,4 @@
-# stockpriceexplorer
+# Stock Price Explorer
 
 Small thing that runs using Kweb. Runs on port 16097 by default.
 
