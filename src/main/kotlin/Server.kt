@@ -19,10 +19,17 @@ fun main() {
 
                 path("/stock/{ticker}") { params ->
                     val ticker: KVar<String> = params.getValue("ticker")
-                    val price: KVal<String> = ticker.map { getFormattedStockPrice(it) }
+                    val price: KVal<String> = ticker
+                        .map { price ->  // not the best way to do this but it works
+                            getStockPrice(price)
+                                .fold(
+                                    {it.cause},
+                                    {it.toString()}
+                                )
+                        }
 
-                    // spacing, idk how padding or margins works with fomantic
-                    for (i in 1..9) br()
+                    // Spacing, the best solution I could find when using fomantic
+                    for (i in 1..8) br()
 
                     div(fomantic.ui.centered.raised.card).new {
 

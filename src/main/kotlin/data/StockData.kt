@@ -1,37 +1,27 @@
 package sharepriceexplorer.main.data
 
+import arrow.core.Either
 import java.math.BigDecimal
 import yahoofinance.YahooFinance
+import java.net.UnknownHostException
 
 
-fun getStockPrice(ticker: String): BigDecimal {
-    // Gets the current price (15-min delay) for a given ticker, returns -1 if the ticker is invalid
+sealed class QueryError(val cause: String) {
+    data class InvalidTicker(val msg: String) : QueryError(msg)
+    data class NoConnection(val msg: String) : QueryError(msg)
+}
 
-    val invalidReturn = BigDecimal(-1)
 
-    if (ticker.isEmpty()) return invalidReturn
-    if (ticker.length > 10) return invalidReturn
+fun getStockPrice(ticker: String): Either<QueryError, BigDecimal> {
+    if (ticker.isEmpty()) return Either.Left(QueryError.InvalidTicker("Ticker must not be empty"))
+    if (ticker.length > 10) return Either.Left(QueryError.InvalidTicker("Invalid ticker"))
 
-    val price: BigDecimal = try {
-        YahooFinance.get(ticker).quote.price
-    } catch(e: NullPointerException) {
-        invalidReturn
+    return try {
+        when (val price = YahooFinance.get(ticker)?.quote?.price) {
+            null -> Either.Left(QueryError.InvalidTicker("Ticker not found"))
+            else -> Either.Right(price)
+        }
+    } catch (_: UnknownHostException) {
+        Either.Left(QueryError.NoConnection("Cannot connect to Yahoo Finance API"))
     }
-
-    return price
-}
-
-
-private fun formatStockPriceData(price: BigDecimal): String {
-    // Turn invalid prices to error messages
-    // is it necessary to have 3 functions? prob not, but I did it anyways
-    if (price != BigDecimal(-1)) return "$price"
-    return "Invalid ticker"
-}
-
-
-fun getFormattedStockPrice(ticker: String): String {
-    // Gets the current price (15-min delay) for a given ticker
-
-    return formatStockPriceData(getStockPrice(ticker))
 }
